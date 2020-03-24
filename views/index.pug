@@ -1,8 +1,9 @@
 html
   head
+    link(rel='stylesheet', href='/stylesheets/style.css')
     title= title
-    head= message
-    body
-        ul
+    h1= message
+  body
+    div.btn-group
             each val in values
-                li= val.name
+              button=val.name

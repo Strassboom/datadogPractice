@@ -25,14 +25,23 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const router = express.Router();
-const port = 8080;
+const profileRouter = express.Router();
+const port = 8081;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use('/resources', router);
+router.use('/profile', profileRouter)
 
 //templating
 app.set('view engine', 'pug')
+app.use(express.static(__dirname + '/public'));
 
+const profileViewer = async (req, res) => {
+  //res.writeHead(200);
+  let values = await sequelizeModels.person.findOne();
+  res.render('index', { title: 'Hey', message: 'Users registered', values: values});
+  //res.send(val);
+}
 
 const controller = async (req, res) => {
   //res.writeHead(200);
@@ -42,10 +51,14 @@ const controller = async (req, res) => {
 }
 
 const postController = async (req, res) => {
-  res.writeHead(200);
+  // res.writeHead(200);
   let userInDb = await sequelizeModels.person.findOrCreate({where: {name:req.body.name},defaults:req.body});
   res.send(`User ${userInDb[1] ? 'added to' : 'is already in'} database`);
 }
+
+profileRouter.route('/profile')
+  .get(profileViewer)
+  //.post(profilerEditor)
 
 router.route('/people')
       .get(controller)
