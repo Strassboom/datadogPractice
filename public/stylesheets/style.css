@@ -1,6 +1,6 @@
 .btn-group button {
-    background-color: #4CAF50; /* Green background */
-    border: 1px solid green; /* Green border */
+    background-color: lightcoral; /* Green background */
+    border: 1px solid #ad5a5a; /* Green border */
     color: white; /* White text */
     padding: 10px 24px; /* Some padding */
     cursor: pointer; /* Pointer/hand icon */
@@ -14,5 +14,23 @@
   
   /* Add a background color on hover */
   .btn-group button:hover {
-    background-color: #3e8e41;
+    background-color: lightcoral;
+  }
+
+  .profile-container {
+    vertical-align: middle;
+    background-color: lightcoral;
+    text-align: center;
+  }
+
+  .profile-container h1 {
+    color: white;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+
+  .profile-container img {
+    width: 500;
+    height:500;
+    object-fit: contain;
   }

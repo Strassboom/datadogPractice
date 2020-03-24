@@ -25,20 +25,21 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const router = express.Router();
-const profileRouter = express.Router();
+const peoplesRouter = express.Router();
 const port = 8081;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use('/resources', router);
-router.use('/profile', profileRouter)
+app.use('/resources/people', router);
+router.use('/profile', peoplesRouter)
 
 //templating
 app.set('view engine', 'pug')
 app.use(express.static(__dirname + '/public'));
 
 const profileViewer = async (req, res) => {
-  let values = await sequelizeModels.person.findOne();
-  res.render('index', { title: 'Hey', message: 'Users registered', values: values});
+  let user = await sequelizeModels.person.findOne({where: {name:req.body.name}});
+  user['title'] = `${user.name}'s Profile`;
+  res.render('profile', {user:user});
 }
 
 const controller = async (req, res) => {
@@ -54,11 +55,11 @@ const postController = async (req, res) => {
   res.send(`User ${userInDb[1] ? 'added to' : 'is already in'} database`);
 }
 
-profileRouter.route('/profile')
-  .get(profileViewer)
+peoplesRouter.route('/')
+  .post(profileViewer)
   //.post(profilerEditor)
 
-router.route('/people')
+router.route('/')
       .get(controller)
       .post(postController)
 

@@ -5,5 +5,6 @@ html
     h1= message
   body
     div.btn-group
-            each val in values
-              button=val.name
+      form(action='/resources/people/profile', method='POST', content-type='application/json')
+        each val in values
+          button(id=val.name,name="name",value=val.name)=val.name
