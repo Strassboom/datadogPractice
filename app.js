@@ -37,10 +37,8 @@ app.set('view engine', 'pug')
 app.use(express.static(__dirname + '/public'));
 
 const profileViewer = async (req, res) => {
-  //res.writeHead(200);
   let values = await sequelizeModels.person.findOne();
   res.render('index', { title: 'Hey', message: 'Users registered', values: values});
-  //res.send(val);
 }
 
 const controller = async (req, res) => {
