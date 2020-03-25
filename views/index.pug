@@ -3,8 +3,11 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
     title= title
     h1= message
+    form(action='/resources/people/profile/create', method='GET', content-type='application/json')
+      div.add-profile
+        button(id="addnew",name="name",value="").menu="+"
   body
     div.btn-group
-      form(action='/resources/people/profile', method='POST', content-type='application/json')
+      form(action='/resources/people/profile/show', method='POST', content-type='application/json')
         each val in values
           button(id=val.name,name="name",value=val.name)=val.name

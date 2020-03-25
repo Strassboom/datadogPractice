@@ -39,7 +39,11 @@ app.use(express.static(__dirname + '/public'));
 const profileViewer = async (req, res) => {
   let user = await sequelizeModels.person.findOne({where: {name:req.body.name}});
   user['title'] = `${user.name}'s Profile`;
-  res.render('profile', {user:user});
+  res.render('profile.pug', {user:user});
+}
+
+const profileEditor = async (req, res) => {
+  res.render('profile.pug')
 }
 
 const controller = async (req, res) => {
@@ -52,11 +56,18 @@ const controller = async (req, res) => {
 const postController = async (req, res) => {
   // res.writeHead(200);
   let userInDb = await sequelizeModels.person.findOrCreate({where: {name:req.body.name},defaults:req.body});
+  if (req.headers.referer && req.headers.referer.includes('/create')){
+    res.redirect('/resources/people');
+  }
   res.send(`User ${userInDb[1] ? 'added to' : 'is already in'} database`);
 }
 
-peoplesRouter.route('/')
+peoplesRouter.route('/show')
   .post(profileViewer)
+  //.post(profilerEditor)
+
+peoplesRouter.route('/create')
+  .get(profileEditor)
   //.post(profilerEditor)
 
 router.route('/')

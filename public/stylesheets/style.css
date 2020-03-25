@@ -14,7 +14,27 @@
   
   /* Add a background color on hover */
   .btn-group button:hover {
-    background-color: lightcoral;
+    background-color: #fc8585;
+  }
+
+  .add-profile {
+    text-align: right;
+  }
+
+  .menu {
+    background-color: lightcoral; /* Green background */
+    border: 1px solid #ad5a5a;
+    color: white; /* White text */
+    padding: 10px 24px; /* Some padding */
+    width: 10.0vmin;
+    height: 10.0vmin;
+    font-size: 5vh;
+    text-align: center;
+    
+  }
+
+  .menu:hover{
+    background-color: #fc8585;
   }
 
   .profile-container {
@@ -29,8 +49,29 @@
     margin-bottom: 0px;
   }
 
+  .profile-container input {
+    width: 90%;
+    height: 20%;
+    display: inline-block;
+    padding: 12px 20px;
+    text-align: center;
+  }
+
+  .profile-container input#name{
+    font-size: 10vh;
+  }
+
+  .profile-container input#picky{
+    padding: 12px 50%;
+  }
+
+  .profile-container input#complete{
+    font-size:30vh;
+  
+  }
+
   .profile-container img {
-    width: 500;
-    height:500;
+    max-height: 600;
+    max-width: 600;
     object-fit: contain;
   }

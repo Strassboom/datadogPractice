@@ -1,8 +1,17 @@
 html
     head
         link(rel='stylesheet', href='/stylesheets/style.css')
-        title=user.title
+        if (user)
+            title=user.title
+        else
+            title="New Profile"
     body
         div.profile-container
-            h1=user.name
-            img(src='https://pbs.twimg.com/media/DoWo3unU4AA2etL.jpg')
+            if (user)
+                h1=user.name
+                img(src='https://pbs.twimg.com/media/DoWo3unU4AA2etL.jpg')
+            else
+                form(action='/resources/people' method='post')
+                    input(type="text",id="name",name="name",placeholder="Enter a name")
+                    input(type='file',id="picky",name='imageupload')
+                    input(type='submit',id="complete",name='uploadimage', value='Confirm Settings')
