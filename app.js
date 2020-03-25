@@ -7,9 +7,6 @@ tracer.init({
     applicationId: process.env.APPLICATION_ID,
   })
 
-// var StatsD = require('node-dogstatsd').StatsD;
-// var dogstatsd = new StatsD();
-
 const Sequelize = require('sequelize');
 const sequelizeInstance = new Sequelize('sqlite::memory:');
 const sequelizeModels = require('./models')(sequelizeInstance);
@@ -24,17 +21,41 @@ const sequelizeModels = require('./models')(sequelizeInstance);
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const loginRouter = express.Router();
 const router = express.Router();
 const peoplesRouter = express.Router();
 const port = 8081;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use('/login', loginRouter);
 app.use('/resources/people', router);
-router.use('/profile', peoplesRouter)
+router.use('/profile', peoplesRouter);
 
 //templating
 app.set('view engine', 'pug')
 app.use(express.static(__dirname + '/public'));
+
+const loginController = async (req, res) => {
+  res.render('login')
+}
+
+const loginCheckupController = async (req, res) => {
+  let result = await sequelizeModels.login.findOne(
+    {
+      where: 
+      {[Sequelize.Op.and]: 
+        [{username: req.body.username},{password: req.body.password}]
+      }
+    });
+  if (result){
+    res.redirect('/resources/people');
+    res.end();
+  }
+  else{
+    res.render('login');
+  }
+}
+
 
 const profileViewer = async (req, res) => {
   let user = await sequelizeModels.person.findOne({where: {name:req.body.name}});
@@ -53,14 +74,29 @@ const controller = async (req, res) => {
   //res.send(val);
 }
 
+// Allows users to create an account using the provided info
+// Used to inject test data at launch
 const postController = async (req, res) => {
-  // res.writeHead(200);
-  let userInDb = await sequelizeModels.person.findOrCreate({where: {name:req.body.name},defaults:req.body});
+  let personInDb = await sequelizeModels.person.findOrCreate(
+    {
+      where: {name:req.body.person.name},
+      defaults:req.body.person
+    });
+  req.body.login.personId = personInDb[0].id;
+  let userInDb = await sequelizeModels.login.findOrCreate(
+    {
+      where: {personId:req.body.login.personId},
+      defaults:req.body.login
+    });
   if (req.headers.referer && req.headers.referer.includes('/create')){
     res.redirect('/resources/people');
   }
   res.send(`User ${userInDb[1] ? 'added to' : 'is already in'} database`);
 }
+
+loginRouter.route('/')
+  .get(loginController)
+  .post(loginCheckupController)
 
 peoplesRouter.route('/show')
   .post(profileViewer)
@@ -85,6 +121,6 @@ app.listen(port, (err) => {
     return console.log(`Something bad happened: ${err}`);
   }
   sequelizeInstance.authenticate();
-  sequelizeInstance.sync({});
+  sequelizeInstance.sync({force:true});
   console.log(`Server is listening on port ${port}`);
 });
