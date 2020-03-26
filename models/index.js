@@ -3,7 +3,7 @@ module.exports = (sequelize) => {
     const detail = require('./detail')(sequelize);
     const login = require('./login')(sequelize);
 
-    login.belongsTo(person, {foreignKey: 'personId'});
+    person.belongsTo(login, {foreignKey: 'id'});
     return {
         person,
         detail,

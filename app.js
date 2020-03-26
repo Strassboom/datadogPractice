@@ -27,35 +27,69 @@ const peoplesRouter = express.Router();
 const port = 8081;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use('/login', loginRouter);
-app.use('/resources/people', router);
-router.use('/profile', peoplesRouter);
 
 //templating
 app.set('view engine', 'pug')
 app.use(express.static(__dirname + '/public'));
 
-const loginController = async (req, res) => {
+app.use('/login', loginRouter);
+app.use('/resources/people', router);
+router.use('/profile', peoplesRouter);
+const displayLoginPage = async (req, res) => {
   res.render('login')
 }
 
-const loginCheckupController = async (req, res) => {
-  let result = await sequelizeModels.login.findOne(
-    {
-      where: 
-      {[Sequelize.Op.and]: 
-        [{username: req.body.username},{password: req.body.password}]
-      }
-    });
-  if (result){
-    res.redirect('/resources/people');
-    res.end();
+const evaluateLogin = async (req, res) => {
+  if (!req.body.username || !req.body.password) {
+    return res.status(400).render('login',{ message: 'need username and password' });
   }
   else{
-    res.render('login', {message:'Please enter correct login info'});
+    if (req.body.submit == 'signup'){
+      let result = await sequelizeModels.login.findOne(
+        {
+          where: 
+          {
+            username: req.body.username
+          }
+        });
+      if (result){
+        res.render('login', { message: 'User already exists' });
+      }
+      else{
+        let loginInDb = await sequelizeModels.login.create(
+          {
+            username: req.body.username,
+            password: req.body.password
+          });
+        req.body.loginId = loginInDb.id;
+        let personInDb = await sequelizeModels.person.findOrCreate(
+          {
+            where: {id:req.body.loginId},
+            defaults: {id:req.body.loginId,name:loginInDb.username}
+          });
+const loginCheckupController = async (req, res) => {
+        res.redirect('/resources/people');
+        res.end();
+      }
+    }
+    else if (req.body.submit == 'login'){
+      let result = await sequelizeModels.login.findOne(
+        {
+          where: 
+          {[Sequelize.Op.and]: 
+            [{username: req.body.username},{password: req.body.password}]
+          }
+        });
+      if (result){
+    res.redirect('/resources/people');
+        res.end();
+      }
+      else{
+        res.render('login', { message: 'Please enter correct login info' });
+      }
+    }
   }
 }
-
 
 const profileViewer = async (req, res) => {
   let user = await sequelizeModels.person.findOne({where: {name:req.body.name}});
@@ -95,8 +129,8 @@ const postController = async (req, res) => {
 }
 
 loginRouter.route('/')
-  .get(loginController)
-  .post(loginCheckupController)
+  .get(displayLoginPage)
+  .post(evaluateLogin)
 
 peoplesRouter.route('/show')
   .post(profileViewer)
