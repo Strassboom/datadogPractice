@@ -55,7 +55,7 @@ const evaluateLogin = async (req, res) => {
       if (result){
         res.render('login', { message: 'User already exists' });
       }
-      else{
+      else {
         let loginInDb = await sequelizeModels.login.create(
           {
             username: req.body.username,
@@ -66,8 +66,7 @@ const evaluateLogin = async (req, res) => {
           {
             where: {id:req.body.loginId},
             defaults: {id:req.body.loginId,name:loginInDb.username}
-          });
-const loginCheckupController = async (req, res) => {
+          });   
         res.redirect('/resources/people');
         res.end();
       }
@@ -81,7 +80,7 @@ const loginCheckupController = async (req, res) => {
           }
         });
       if (result){
-    res.redirect('/resources/people');
+        res.redirect('/resources/people');
         res.end();
       }
       else{
