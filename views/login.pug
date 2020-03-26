@@ -5,8 +5,10 @@ html
     body
         div.login-container
             h1="Please Login to Continue"
-            form(action='/login',method='POST')
+            if (message)
+                h4=message
+            form(action='/login',method='POST', autocomplete='off')
                 input(type='text',id='username',name='username',placeholder='username')
-                input(type='text',id='password',name='password',placeholder='password')
+                input(type='password',id='password',name='password',placeholder='password')
                 input(type='Submit',id='submit',name='submit',placeholder='password')
 

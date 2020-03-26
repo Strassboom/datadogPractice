@@ -52,7 +52,7 @@ const loginCheckupController = async (req, res) => {
     res.end();
   }
   else{
-    res.render('login');
+    res.render('login', {message:'Please enter correct login info'});
   }
 }
 
